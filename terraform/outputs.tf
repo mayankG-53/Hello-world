@@ -1,11 +1,11 @@
 output "vpc_id" {
-  value = module.vpc.vpc_id
+  value = aws_vpc.my_vpc.id
 }
 
 output "eks_cluster_name" {
-  value = module.eks.cluster_id
+  value = aws_eks_cluster.eks_cluster.name
 }
 
 output "eks_cluster_endpoint" {
-  value = module.eks.cluster_endpoint
+  value = aws_eks_cluster.eks_cluster.endpoint
 }
