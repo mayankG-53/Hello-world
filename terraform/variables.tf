@@ -27,7 +27,7 @@ variable "cluster_name" {
 }
 
 variable "cluster_version" {
-  default = "20.31"
+  default = "1.31"
 }
 
 variable "desired_capacity" {
