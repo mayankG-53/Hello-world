@@ -1,24 +1,53 @@
 provider "aws" {
-  region = var.region
+  region = var.aws_region
 }
 
-module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  cluster_name    = var.cluster_name
-  cluster_version = "1.21"
-  subnets         = var.subnets
-  vpc_id          = var.vpc_id
+resource "aws_vpc" "main" {
+  cidr_block = var.vpc_cidr
+  enable_dns_support = true
+  enable_dns_hostnames = true
+}
 
-  node_groups = {
-    eks_nodes = {
-      desired_capacity = 2
-      max_capacity     = 3
-      min_capacity     = 1
-      instance_type    = "t3.medium"
-    }
+resource "aws_subnet" "subnet_a" {
+  vpc_id = aws_vpc.main.id
+  cidr_block = var.subnet_cidr_a
+  availability_zone = var.availability_zone_a
+}
+
+resource "aws_subnet" "subnet_b" {
+  vpc_id = aws_vpc.main.id
+  cidr_block = var.subnet_cidr_b
+  availability_zone = var.availability_zone_b
+}
+
+resource "aws_security_group" "eks_sec_group" {
+  name        = "eks_sec_group"
+  description = "EKS Security Group"
+  vpc_id      = aws_vpc.main.id
+}
+
+resource "aws_iam_role" "eks_role" {
+  name = "eks-cluster-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_eks_cluster" "my_cluster" {
+  name     = var.cluster_name
+  role_arn = aws_iam_role.eks_role.arn
+
+  vpc_config {
+    subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
   }
-}
-
-output "eks_cluster_name" {
-  value = module.eks.cluster_id
 }
