@@ -5,19 +5,19 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "subnet1" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-west-2a"
+  availability_zone = "us-east-1a"
 }
 
 resource "aws_subnet" "subnet2" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.2.0/24"
-  availability_zone = "us-west-2b"
+  availability_zone = "us-east-1b"
 }
 
 resource "aws_subnet" "subnet3" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.3.0/24"
-  availability_zone = "us-west-2c"
+  availability_zone = "us-east-1c"
 }
 
 resource "aws_iam_role" "eks_cluster_role" {
@@ -75,7 +75,7 @@ resource "aws_iam_policy_attachment" "eks_node_group_cloudwatch_logs" {
 }
 
 resource "aws_eks_cluster" "main" {
-  name     = "my-cluster-1"
+  name     = "my-cluster"
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
@@ -99,4 +99,7 @@ resource "aws_eks_node_group" "main" {
     desired_size = 2
   }
 
+  remote_access {
+    ec2_ssh_key = "test123" 
+  }
 }
