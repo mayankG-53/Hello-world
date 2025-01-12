@@ -1,5 +1,14 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+
+
 provider "aws" {
-  region = var.aws_region
+  region = "us-west-2"
 }
 
 resource "aws_vpc" "main" {
@@ -50,4 +59,6 @@ resource "aws_eks_cluster" "my_cluster" {
   vpc_config {
     subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
   }
+}
+
 }
