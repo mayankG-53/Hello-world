@@ -74,8 +74,14 @@ resource "aws_iam_policy_attachment" "eks_node_group_cloudwatch_logs" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
+resource "aws_iam_policy_attachment" "eks_node_group_cni_policy" {
+  name       = "eks-node-group-cni-policy-attachment"
+  roles      = [aws_iam_role.eks_node_group_role.name]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
 resource "aws_eks_cluster" "main" {
-  name     = "my-cluster"
+  name     = "my-cluster-1"
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
