@@ -1,50 +1,106 @@
-
 resource "aws_vpc" "main" {
-  cidr_block = var.vpc_cidr
-  enable_dns_support = true
-  enable_dns_hostnames = true
+  cidr_block = "10.0.0.0/16"
 }
 
-resource "aws_subnet" "subnet_a" {
-  vpc_id = aws_vpc.main.id
-  cidr_block = var.subnet_cidr_a
-  availability_zone = var.availability_zone_a
+resource "aws_subnet" "subnet1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-west-2a"
 }
 
-resource "aws_subnet" "subnet_b" {
-  vpc_id = aws_vpc.main.id
-  cidr_block = var.subnet_cidr_b
-  availability_zone = var.availability_zone_b
+resource "aws_subnet" "subnet2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-west-2b"
 }
 
-resource "aws_security_group" "eks_sec_group" {
-  name        = "eks_sec_group"
-  description = "EKS Security Group"
-  vpc_id      = aws_vpc.main.id
+resource "aws_subnet" "subnet3" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-west-2c"
 }
 
-resource "aws_iam_role" "eks_role" {
+resource "aws_iam_role" "eks_cluster_role" {
   name = "eks-cluster-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
+        Action    = "sts:AssumeRole"
         Principal = {
           Service = "eks.amazonaws.com"
         }
+        Effect    = "Allow"
+        Sid       = ""
       }
     ]
   })
 }
 
-resource "aws_eks_cluster" "my_cluster" {
-  name     = var.cluster_name
-  role_arn = aws_iam_role.eks_role.arn
+resource "aws_iam_policy_attachment" "eks_cluster_role_policy_attachment" {
+  name       = "eks-cluster-role-policy-attachment"
+  roles      = [aws_iam_role.eks_cluster_role.name]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+resource "aws_iam_role" "eks_node_group_role" {
+  name = "eks-node-group-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Effect    = "Allow"
+        Sid       = ""
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "eks_node_group_role_policy_attachment" {
+  name       = "eks-node-group-role-policy-attachment"
+  roles      = [aws_iam_role.eks_node_group_role.name]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_policy_attachment" "eks_node_group_cloudwatch_logs" {
+  name       = "eks-node-group-cloudwatch-logs-policy-attachment"
+  roles      = [aws_iam_role.eks_node_group_role.name]
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
+resource "aws_eks_cluster" "main" {
+  name     = "my-cluster"
+  role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
-    subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+    subnet_ids = [
+      aws_subnet.subnet1.id,
+      aws_subnet.subnet2.id,
+      aws_subnet.subnet3.id
+    ]
+  }
+}
+resource "aws_eks_node_group" "main" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "my-node-group"
+  node_role_arn   = aws_iam_role.eks_node_group_role.arn
+  subnet_ids      = [aws_subnet.subnet1.id, aws_subnet.subnet2.id, aws_subnet.subnet3.id]
+  instance_types  = ["t3.medium"]
+  desired_size    = 2
+
+  scaling_config {
+    min_size = 1
+    max_size = 3
+    desired_size = 2
+  }
+
+  remote_access {
+    ec2_ssh_key = "test123" 
   }
 }
