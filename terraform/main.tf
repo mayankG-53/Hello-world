@@ -178,3 +178,23 @@ resource "aws_eks_node_group" "main" {
     ec2_ssh_key = "test123"  # Replace with your actual SSH key name
   }
 }
+
+resource "aws_security_group" "eks_security_group" {
+  name        = "eks-security-group"
+  description = "Security group for EKS worker nodes"
+
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]  # VPC CIDR block or specific ranges for internal communication
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow egress traffic to anywhere
+  }
+}
+
