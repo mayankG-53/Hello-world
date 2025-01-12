@@ -99,7 +99,4 @@ resource "aws_eks_node_group" "main" {
     desired_size = 2
   }
 
-  remote_access {
-    ec2_ssh_key = "test123" 
-  }
 }
