@@ -75,7 +75,7 @@ resource "aws_iam_policy_attachment" "eks_node_group_cloudwatch_logs" {
 }
 
 resource "aws_eks_cluster" "main" {
-  name     = "my-cluster"
+  name     = "my-cluster-1"
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
