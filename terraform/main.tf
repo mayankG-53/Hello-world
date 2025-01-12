@@ -5,6 +5,7 @@ terraform {
       version = "~> 5.0"
     }
   }
+}
 
 
 provider "aws" {
@@ -59,6 +60,4 @@ resource "aws_eks_cluster" "my_cluster" {
   vpc_config {
     subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
   }
-}
-
 }
