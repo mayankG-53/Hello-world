@@ -173,9 +173,10 @@ resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "my-node-group"
   node_role_arn   = aws_iam_role.eks_node_group_role.arn
-  subnet_ids      = [aws_subnet.subnet3.id, aws_subnet.subnet4.id]  # Private subnets
-  ami_type        = "AL2_x86_64"
-  instance_types  = ["t3.medium"]
+  subnet_ids      = [aws_subnet.subnet3.id, aws_subnet.subnet4.id]  # Ensure these subnets are private and correctly tagged for EKS
+  
+  ami_type        = "AL2_x86_64"  # Ensure compatibility with EKS cluster version
+  instance_types  = ["t3.medium"] # Ensure instance types are available in the selected region/AZs
 
   scaling_config {
     min_size     = 1
@@ -184,9 +185,15 @@ resource "aws_eks_node_group" "main" {
   }
 
   remote_access {
-    ec2_ssh_key = "test123"  # Replace with your actual SSH key name
+    ec2_ssh_key = "test123"  # Ensure this key exists in the region where EKS is deployed
+    source_security_group_ids = [aws_security_group.node_group_sg.id]  # Security group allowing SSH access
+  }
+
+  tags = {
+    Name = "my-node-group"
   }
 }
+
 
 resource "aws_security_group" "eks_security_group" {
   name        = "eks-security-group"
