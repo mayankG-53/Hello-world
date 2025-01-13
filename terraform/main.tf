@@ -174,6 +174,7 @@ resource "aws_eks_node_group" "main" {
   node_group_name = "my-node-group"
   node_role_arn   = aws_iam_role.eks_node_group_role.arn
   subnet_ids      = [aws_subnet.subnet3.id, aws_subnet.subnet4.id]  # Private subnets
+  ami_type        = "AL2_x86_64"
   instance_types  = ["t3.medium"]
 
   scaling_config {
@@ -197,6 +198,13 @@ resource "aws_security_group" "eks_security_group" {
   to_port     = 443
   protocol    = "tcp"
   cidr_blocks = ["10.0.0.0/16"]  # VPC CIDR block or specific internal ranges
+}
+
+ingress {
+  from_port   = 1025
+  to_port     = 65535
+  protocol    = "tcp"
+  cidr_blocks = ["10.0.0.0/16"]  # For internal communication between nodes
 }
 
   egress {
