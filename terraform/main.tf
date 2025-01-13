@@ -193,11 +193,11 @@ resource "aws_security_group" "eks_security_group" {
   vpc_id      = aws_vpc.main.id 
 
   ingress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]  # VPC CIDR block or specific ranges for internal communication
-  }
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
+  cidr_blocks = ["10.0.0.0/16"]  # VPC CIDR block or specific internal ranges
+}
 
   egress {
     from_port   = 0
