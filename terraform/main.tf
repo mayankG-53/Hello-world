@@ -186,7 +186,7 @@ resource "aws_eks_node_group" "main" {
 
   remote_access {
     ec2_ssh_key = "test123"  # Ensure this key exists in the region where EKS is deployed
-    source_security_group_ids = [aws_security_group.node_group_sg.id]  # Security group allowing SSH access
+    source_security_group_ids = [aws_security_group.eks_security_group.id]  # Security group allowing SSH access
   }
 
   tags = {
