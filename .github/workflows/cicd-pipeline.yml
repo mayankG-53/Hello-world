@@ -68,8 +68,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    env: 
-      AWS_REGION: 'us-east-1'
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -83,7 +82,7 @@ jobs:
 
     - name: Configure kubectl
       run: |
-        aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name $(terraform output -raw cluster_name)
+        aws eks --region us-east-1 update-kubeconfig --name $(terraform output -raw cluster_name)
 
     - name: Create namespace if not exists
       run: kubectl get namespace my-namespace || kubectl create namespace my-namespace
