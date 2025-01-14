@@ -48,6 +48,10 @@ jobs:
          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          aws-region: ${{ env.AWS_REGION }}
+         
+     - name: Get EKS Cluster Name
+        id: get_eks_cluster_name
+        run: echo "eks_cluster_name=$(terraform output -raw eks_cluster_name)" >> $GITHUB_ENV
 
 
   build:
@@ -86,7 +90,8 @@ jobs:
           region: us-east-1  # Specify your AWS region here
 
       - name: Set up kubectl
-        uses: aws-actions/eks-update-kubeconfig@v1
+        run: |
+          aws eks update-kubeconfig --name ${{ env.eks_cluster_name }} --region us-east-1
 
       - name: Set up HashiCorp Vault
         uses: hashicorp/vault-action@v2
