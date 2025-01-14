@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: mydockerhub/hello-world
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+  port: 80
