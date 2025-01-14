@@ -22,7 +22,7 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: us-east-1  # Specify your AWS region here
+          aws-region: us-east-1  # Specify your AWS region here
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
