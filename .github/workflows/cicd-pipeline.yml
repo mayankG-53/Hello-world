@@ -66,8 +66,8 @@ jobs:
         docker push mak53/hello-world-app:latest
 
   deploy:
-   runs-on: ubuntu-latest
-   needs: build
+    runs-on: ubuntu-latest
+    needs: build
     env:
      AWS_REGION = 'us-east-1'
    steps:
