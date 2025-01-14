@@ -49,10 +49,6 @@ jobs:
          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          aws-region: ${{ env.AWS_REGION }}
 
- 
-     - name: Get EKS Cluster Name
-       id: get_eks_cluster_name
-       run: echo "eks_cluster_name=$(terraform output -raw eks_cluster_name)" >> $GITHUB_ENV
 
   build:
     needs: terraform
@@ -105,8 +101,6 @@ jobs:
 
       - name: Set up kubectl
         uses: aws-actions/eks-update-kubeconfig@v1
-        with:
-          cluster-name: ${{ env.eks_cluster_name }}  # Using the output from Terraform dynamically
 
       - name: Set up HashiCorp Vault
         uses: hashicorp/vault-action@v2
