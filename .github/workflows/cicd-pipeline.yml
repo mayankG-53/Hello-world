@@ -51,37 +51,23 @@ jobs:
 
 
   build:
-    needs: terraform
     runs-on: ubuntu-latest
+    needs: terraform
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    - name: Build Docker Image
+      run: docker build -t hello-world-app:latest ./app
 
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build Docker image
-        run: |
-          docker build -t mak53/hello-world:latest .
-
-      - name: Push Docker image to Docker Hub
-        run: |
-          docker push mak53/hello-world:latest
+    - name: Push Docker Image
+      run: |
+        docker tag hello-world-app:latest ${{ secrets.DOCKER_USERNAME }}/hello-world-app:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/hello-world-app:latest
 
   deploy:
     needs: build
@@ -97,7 +83,7 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: 'us-east-1'  # Specify your AWS region here
+          region: us-east-1  # Specify your AWS region here
 
       - name: Set up kubectl
         uses: aws-actions/eks-update-kubeconfig@v1
@@ -112,5 +98,5 @@ jobs:
         run: |
           helm upgrade --install hello-world ./k8s/hello-world-chart \
             --namespace custom-namespace \
-            --set image.repository=mydockerhub/hello-world \
+            --set image.repository=${{ secrets.DOCKER_USERNAME }}/hello-world-app \
             --set image.tag=latest

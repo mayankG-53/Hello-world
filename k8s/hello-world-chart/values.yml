@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: mydockerhub/hello-world
+  repository: mak53/hello-world
   tag: latest
   pullPolicy: Always
 
