@@ -14,7 +14,6 @@ output "region" {
   value       = var.region
 }
 
-output "cluster_name" {
-  description = "Kubernetes Cluster Name"
-  value       = module.eks.cluster_name
+output "eks_cluster_name" {
+  value = aws_eks_cluster.my_eks.name
 }

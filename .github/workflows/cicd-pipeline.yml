@@ -3,14 +3,15 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
     environment: production
-    env: 
-      AWS_REGION: 'us-east-1'
+
+    outputs:
+      eks_cluster_name: ${{ steps.terraform.outputs.eks_cluster_name }}
 
     steps:
       - name: Checkout repository
@@ -21,7 +22,7 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}  # Specify your AWS region here
+          region: us-east-1  # Specify your AWS region here
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -35,7 +36,12 @@ jobs:
         run: terraform plan -out=tfplan ./terraform
 
       - name: Terraform Apply
+        id: terraform
         run: terraform apply -auto-approve tfplan
+
+      - name: Get EKS Cluster Name
+        id: get_eks_cluster_name
+        run: echo "eks_cluster_name=$(terraform output -raw eks_cluster_name)" >> $GITHUB_ENV
 
   build:
     needs: terraform
@@ -89,7 +95,7 @@ jobs:
       - name: Set up kubectl
         uses: aws-actions/eks-update-kubeconfig@v1
         with:
-          cluster-name: ${{ secrets.EKS_CLUSTER_NAME }}
+          cluster-name: ${{ env.eks_cluster_name }}  # Using the output from Terraform dynamically
 
       - name: Set up HashiCorp Vault
         uses: hashicorp/vault-action@v2
