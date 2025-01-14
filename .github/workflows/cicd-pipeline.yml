@@ -22,7 +22,7 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Specify your AWS region here
+          region: 'us-east-1'  # Specify your AWS region here
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -70,11 +70,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t mydockerhub/hello-world:latest .
+          docker build -t mak53/hello-world:latest .
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push mydockerhub/hello-world:latest
+          docker push mak53/hello-world:latest
 
   deploy:
     needs: build
@@ -90,7 +90,7 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: us-west-2  # Specify your AWS region here
+          region: 'us-east-1'  # Specify your AWS region here
 
       - name: Set up kubectl
         uses: aws-actions/eks-update-kubeconfig@v1
