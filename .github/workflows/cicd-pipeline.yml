@@ -9,6 +9,8 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     environment: production
+    env: 
+      AWS_REGION: 'us-east-1'
 
     steps:
       - name: Checkout repository
@@ -19,7 +21,7 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}  # Specify your AWS region here
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -82,7 +84,7 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: us-west-2
+          region: us-west-2  # Specify your AWS region here
 
       - name: Set up kubectl
         uses: aws-actions/eks-update-kubeconfig@v1
