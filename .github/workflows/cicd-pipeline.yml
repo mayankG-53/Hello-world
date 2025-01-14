@@ -67,12 +67,11 @@ jobs:
 
   deploy:
   runs-on: ubuntu-latest
-  needs: build
   env: 
-      AWS_REGION: 'us-east-1'
+    AWS_REGION: 'us-east-1'
 
-
-
+  needs: build
+  
   steps:
   - name: Checkout code
     uses: actions/checkout@v3
