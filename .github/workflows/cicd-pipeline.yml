@@ -83,11 +83,11 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: us-east-1  # Specify your AWS region here
+          aws-region: us-east-1  # Specify your AWS region here
 
       - name: Set up kubectl
         run: |
-          aws eks --region us-west-2 update-kubeconfig --name mayank-eks-1
+          aws eks --region us-west-2 update-kubeconfig --name mayank-eks-2
 
       - name: Set up HashiCorp Vault
         uses: hashicorp/vault-action@v2
