@@ -87,7 +87,7 @@ jobs:
 
       - name: Set up kubectl
         run: |
-          aws eks --region us-west-2 update-kubeconfig --name mayank-eks-2
+          aws eks --region us-west-2 update-kubeconfig --name mayank-eks-3
 
       - name: Set up HashiCorp Vault
         uses: hashicorp/vault-action@v2
