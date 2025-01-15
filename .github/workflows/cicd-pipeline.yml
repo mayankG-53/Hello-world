@@ -90,6 +90,10 @@ jobs:
         run: |
           aws eks --region us-east-1 update-kubeconfig --name mayank-eks-8
 
+      - name: Create Kubernetes Namespace
+        run: kubectl create namespace custom-namespace || true
+
+
       - name: Set up Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
