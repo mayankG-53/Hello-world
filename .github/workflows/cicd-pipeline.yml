@@ -88,7 +88,7 @@ jobs:
 
       - name: Set up kubectl
         run: |
-          aws eks --region us-east-1 update-kubeconfig --name mayank-eks-1
+          aws eks --region us-east-1 update-kubeconfig --name mayank-eks-6
 
       - name: Set up Helm
         run: |
