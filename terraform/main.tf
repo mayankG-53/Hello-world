@@ -4,8 +4,6 @@ provider "aws" {
   region = var.region
 }
 
-# Filter out local zones, which are not currently supported 
-# with managed node groups
 data "aws_availability_zones" "available" {
   filter {
     name   = "opt-in-status"
@@ -14,7 +12,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "mayank-eks-7"
+  cluster_name = "mayank-eks-8"
 }
 
 

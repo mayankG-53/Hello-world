@@ -88,7 +88,7 @@ jobs:
 
       - name: Set up kubectl
         run: |
-          aws eks --region us-east-1 update-kubeconfig --name mayank-eks-7
+          aws eks --region us-east-1 update-kubeconfig --name mayank-eks-8
 
       - name: Set up Helm
         run: |
@@ -96,9 +96,10 @@ jobs:
 
 
       - name: Deploy to Kubernetes with Helm
+        working-directory: ./k8s
         run: |
-          helm upgrade --install hello-world ./k8s/hello-world-chart \
+            helm upgrade --install hello-world ./hello-world-chart \
             --namespace custom-namespace \
             --set image.repository=${{ secrets.DOCKER_USERNAME }}/hello-world-app \
             --set image.tag=latest
-        working-directory: ./k8s  
+        
