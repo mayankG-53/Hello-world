@@ -78,22 +78,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Specify your AWS region here
 
       - name: Set up kubectl
         run: |
-          aws eks --region us-west-2 update-kubeconfig --name mayank-eks-3
+          aws eks --region us-east-1 update-kubeconfig --name mayank-eks-4
 
-      - name: Set up HashiCorp Vault
-        uses: hashicorp/vault-action@v2
-        with:
-          url: ${{ secrets.VAULT_URL }}
-          token: ${{ secrets.VAULT_TOKEN }}
 
       - name: Deploy to Kubernetes with Helm
         run: |
