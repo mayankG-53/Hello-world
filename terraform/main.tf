@@ -12,7 +12,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "mayank-eks-8"
+  cluster_name = "mayank-eks-9"
 }
 
 
