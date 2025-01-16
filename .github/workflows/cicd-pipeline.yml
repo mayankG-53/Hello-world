@@ -88,7 +88,7 @@ jobs:
 
       - name: Set up kubectl
         run: |
-          aws eks --region us-east-1 update-kubeconfig --name mayank-eks-9
+          aws eks --region us-east-1 update-kubeconfig --name mayank-eks-10
 
       - name: Create Kubernetes Namespace
         run: kubectl create namespace custom-namespace || true
